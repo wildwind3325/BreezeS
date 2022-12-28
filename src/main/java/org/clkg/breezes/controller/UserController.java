@@ -1,6 +1,9 @@
 package org.clkg.breezes.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpSession;
 import org.clkg.breezes.mapper.UserMapper;
 import org.clkg.breezes.model.User;
@@ -20,7 +23,9 @@ public class UserController {
 
     @GetMapping(value = "/list")
     public Response list(HttpSession session) {
-        List<User> users = userMapper.selectList(null);
+        QueryWrapper<User> qw = new QueryWrapper<>();
+        qw.select("id", "name");
+        List<Map<String, Object>> users = userMapper.selectMaps(qw);
         return Response.success(users);
     }
 
@@ -29,6 +34,7 @@ public class UserController {
         User user = new User();
         user.setName(name);
         user.setAge(age);
+        user.setCreatedAt(new Date());
         userMapper.insert(user);
         return Response.success(user);
     }
