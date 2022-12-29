@@ -1,10 +1,10 @@
 package org.clkg.breezes.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpSession;
+import org.clkg.breezes.dao.CommonDao;
 import org.clkg.breezes.mapper.UserMapper;
 import org.clkg.breezes.model.User;
 import org.clkg.breezes.util.Response;
@@ -19,13 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @Autowired
-    private UserMapper userMapper;
+    CommonDao dao;
+
+    @Autowired
+    UserMapper mapper;
 
     @GetMapping(value = "/list")
     public Response list(HttpSession session) {
-        QueryWrapper<User> qw = new QueryWrapper<>();
-        qw.select("id", "name");
-        List<Map<String, Object>> users = userMapper.selectMaps(qw);
+        List<Map<String, Object>> users = dao.find("select * from user");
         return Response.success(users);
     }
 
@@ -35,7 +36,7 @@ public class UserController {
         user.setName(name);
         user.setAge(age);
         user.setCreatedAt(new Date());
-        userMapper.insert(user);
+        mapper.insert(user);
         return Response.success(user);
     }
 }
